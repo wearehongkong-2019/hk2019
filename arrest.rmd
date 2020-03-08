@@ -1,0 +1,22 @@
+---
+title: "HK Protest Arrest Data"
+author: "HK"
+date: "3/8/2020"
+output: html_document
+---
+
+```{r}
+library(ggplot2)
+library(dplyr)
+arrest <- read.csv("https://raw.githubusercontent.com/wearehongkong-2019/hk2019/master/arrestDec4.csv")
+
+```
+
+```{r}
+arrest <- arrest %>% 
+  mutate(total = Male + Female)
+
+ggplot(aes(x = Age, y = total),
+       data=arrest) + geom_col()
+
+```
