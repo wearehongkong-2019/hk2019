@@ -2,7 +2,7 @@
 title: "HK Protest Arrest Data"
 author: "HK"
 date: "3/8/2020"
-output: html_document
+output: rmarkdown::github_document
 ---
 
 ```{r}
