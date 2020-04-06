@@ -1,5 +1,5 @@
 ---
-title: "HK Protest Arrest Data"
+title: "Arrest Data"
 author: "HK"
 date: "3/8/2020"
 output: rmarkdown::github_document
@@ -8,15 +8,37 @@ output: rmarkdown::github_document
 ```{r}
 library(ggplot2)
 library(dplyr)
-arrest <- read.csv("https://raw.githubusercontent.com/wearehongkong-2019/hk2019/master/arrestDec4.csv")
-
+arrest <- read.csv("https://raw.githubusercontent.com/wearehongkong-2019/hk2019/master/arrestDec4_byagesex.csv")
 ```
 
 ```{r}
 arrest <- arrest %>% 
   mutate(total = Male + Female)
 
-ggplot(aes(x = Age, y = total),
-       data=arrest) + geom_col()
+male<-ggplot(aes(x = Age, y=Male),
+       data=arrest) + geom_col() + theme_bw() + ylim(0,2000)
+female<-ggplot(aes(x = Age, y=Female),
+       data=arrest) + geom_col() + theme_bw() + ylim(0,2000)
+total<-ggplot(aes(x = Age, y=total),
+       data=arrest) + geom_col() + theme_bw() + ylim(0,2000)
 
+ggpubr::ggarrange(male, female, total,
+          labels = c("Male", "Female", "Total"),
+          ncol = 2, nrow = 2) %>% ggpubr::ggexport(filename = "arrestDec4_byagesex.png")
+
+```
+
+```{r}
+arrestjan23 <- read.csv("https://raw.githubusercontent.com/wearehongkong-2019/hk2019/master/arrestJan23_byage.csv")
+
+arrestjan23 %>% ggplot(aes(x=Age,y=Total))+geom_col()
+ggsave("arrestJan23byage.png")
+```
+
+```{r}
+daily <- read.csv("https://raw.githubusercontent.com/wearehongkong-2019/hk2019/master/daily_data/Jan23_Daily.csv")
+daily$Date<-as.Date(daily$Date, "%Y-%m-%d")
+daily
+ggplot(data=daily,aes(x=Date,y=Arrested))+geom_line()  + theme_bw() + geom_vline(xintercept = c(daily$Date[158],daily$Date[207],daily$Date[84],daily$Date[115],daily$Date[58],daily$Date[199]), linetype=4, color="maroon") + annotate(geom="text", x=daily$Date[158], y=900, label="PolyU",color="maroon")+ annotate(geom="text", x=daily$Date[207], y=900, label="Jan 1",color="maroon")+ annotate(geom="text", x=daily$Date[84], y=900, label="31 Aug",color="maroon")+ annotate(geom="text", x=daily$Date[115], y=900, label="1 Oct",color="maroon")+ annotate(geom="text", x=daily$Date[58], y=600, label="Three boycotts",color="maroon")+ annotate(geom="text", x=daily$Date[199], y=600, label="Christmas Eve",color="maroon")+ labs(title="Number of arrested individuals in public assemblies from 9 Jun 2019 to 23 Jan 2020")
+ggsave("dailyJan23.png")
 ```
